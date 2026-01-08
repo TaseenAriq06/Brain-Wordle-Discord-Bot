@@ -17,7 +17,7 @@
 * **Visual Interface**: The board updates dynamically, showing "Found Letters" and "Valid Letters" at the top for easy tracking.
 
 ### 🛠️ Utilities
-* **`!nyt [optional: number]`**: Connects to the **New York Times API** to retrieve the official daily answer. You can also look up past puzzles (e.g., `!nyt 100`) or specific dates. *Spoiler tags included!*
+* **`!nyt`**: Connects to the **New York Times API** to retrieve the official daily answer. *Spoiler tags included!*
 * **`!unscramble [LETTERS]`**: Uses an anagram algorithm to find all valid 5-letter words from a scrambled input. Great for when you are stuck!
 * **`!help`**: Displays a clean embed listing all available commands.
 
