@@ -9,7 +9,7 @@
 ## ✨ Features
 
 ### 🎮 Unlimited Gameplay
-* **`!play`**: Starts a new game with a secret 5-letter word selected from a dictionary of 12,000+ words.
+* **`!play`**: Starts a new game with a secret 5-letter word selected from a dictionary of 3,000+ words.
 * **`!guess [WORD]`**: Submits a guess. The bot provides instant feedback using emojis:
     * 🟩 **Green**: Correct letter, correct spot.
     * 🟨 **Yellow**: Correct letter, wrong spot.
