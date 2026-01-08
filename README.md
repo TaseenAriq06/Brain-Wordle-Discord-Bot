@@ -1,3 +1,4 @@
+![Brain Wordle Banner](assets/banner.png)
 # 🧠 Brain Wordle - Discord Bot
 
 > A fully functional Discord bot that brings the popular Wordle game directly into your server. Built with Python and the Discord API.
