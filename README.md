@@ -24,7 +24,7 @@
 ---
 
 ### 🗺️ Roadmap & Future Goals
-* This project is currently in active development. Here are the planned updates:
+* This project is currently in **active development**. Here are the planned updates:
 
 * Cloud Deployment: Migrate from local hosting to a 24/7 cloud service (Discloud or Railway).
 * Code Documentation: Add detailed docstrings and comments to improve codebase readability.
