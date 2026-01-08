@@ -17,7 +17,7 @@
     * ⬜ **White**: Letter not in the word.
 * **Visual Interface**: The board updates dynamically, showing "Found Letters" and "Valid Letters" at the top for easy tracking.
 
-![Brain Wordle Guess](https://github.com/TaseenAriq06/Brain-Wordle-Discord-Bot/blob/5f8c8e21bbd158dfc9acfc7df4a7d2d58256d8f9/assets/guess.jpg)
+  ![Brain Wordle Guess](https://github.com/TaseenAriq06/Brain-Wordle-Discord-Bot/blob/5f8c8e21bbd158dfc9acfc7df4a7d2d58256d8f9/assets/guess.jpg)
 
 ### 🛠️ Utilities
 * **`!nyt`**: Connects to the **New York Times API** to retrieve the official daily answer. *Spoiler tags included!*
