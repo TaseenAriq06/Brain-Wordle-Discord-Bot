@@ -62,7 +62,7 @@ async def nyt(ctx):
             date_count = data['days_since_launch']
 
             # Send the answer hidden behind a spoiler tag
-            await ctx.send(f"🕵️ **Wordle No. {date_count} Spoiler!**\nDate: {pretty_date}\nToday's answer is: ||**{solution}**||")
+            await ctx.send(f"🕵️ **Wordle No. `{date_count}` Spoiler!**\nDate: {pretty_date}\nToday's answer is: ||**{solution}**||")
         else:
             await ctx.send("❌ Error: Couldn't find today's Wordle. NYT might be down!")
     except Exception as e:
@@ -99,7 +99,8 @@ async def play(ctx):
         "word" : secret_word, 
         "history": [],                          # Stores past guesses in visual rows
         "greens": ["_", "_", "_", "_", "_"],    # Tracks known correct positions
-        "yellows": set()                        # Tracks known valid letters (use hashset to prevent dupes)
+        "yellows": set(),                       # Tracks known valid letters (use hashset to prevent dupes)
+        "grays": set()                          # Tracks bad letters which are gray
     }
     await ctx.send(f"{mention}, 🎮 **New Game Started!**\nI've picked a secret 5-letter word.\nType `!guess WORD` to play!")
 
@@ -182,6 +183,11 @@ async def guess(ctx, user_guess: str):
     final_message = f"{status_header}\n{board_display}"
     attempts_used = len(history)
     
+    # Update Invalid Letters (grays) for the !hint command
+    for letter in user_guess:
+        if letter not in target_word:
+            game_data["grays"].add(letter)
+    
     if user_guess == target_word:
         storage.update_stat(ctx.author.id, 'win') # update the win count by 1
 
@@ -197,26 +203,63 @@ async def guess(ctx, user_guess: str):
 
 # UTILITY COMMANDS
 @bot.command()
-async def unscramble(ctx, user_word: str):
-    user_word = user_word.upper()
+async def hint(ctx):
     mention = ctx.author.mention
 
-    if len(user_word) != 5:
-        await ctx.send(f"{mention},\n ⚠️ Please provide exactly 5 letters!")
+    if ctx.author.id not in active_games: # Make sure the user is actually playing a game
+        await ctx.send(f"{mention},\n**❌ You aren't playing right now! Type `!play` to start.**")
         return
-    # Sort the user's letters to compare against sorted dictionary words
-    target_word = sorted(user_word)
-    found_words = []
-
-    for word in word_list:
-        if sorted(word) == target_word:
-            found_words.append(word)
     
-    if found_words:
-        result_string = ", ".join(found_words)
-        await ctx.send(f"{mention}\n 🧩 **Unscrambled options for {user_word}:**\n`{result_string}`")
+    # Get the current game constraints from memory
+    game_data = active_games[ctx.author.id]
+    known_greens = game_data["greens"]
+    known_yellows = game_data["yellows"]
+    known_grays = game_data["grays"]
+
+    await ctx.send("🧠 **Thinking...** scanning dictionary for matches...")
+
+    possible_matches = []
+
+    for word in word_list: # Iterate through every word in the dictionary 
+        # Constraint 1: Correct Green Positions: word must have exact same letter in exact spot to be green
+        match_greens = True
+        for i in range(5):
+            # if a green letter exists at [i], the hint word MUST match this
+            if known_greens[i] != "_" and known_greens[i] != word[i]: 
+                match_greens = False
+                break
+        if not match_greens:
+            continue # Skip this word since it has a conflict with green clue
+        
+        # Constraint 2: Yellow Letters Exists: word must contain all yellow letters somewhere
+        match_yellows = True
+        for letter in known_yellows:
+            if letter not in word:
+                match_yellows = False
+                break
+        if not match_yellows:
+            continue # Skip the word since its missing a important yellow letter
+        
+        # Constraint 3: Gray Letters INVALID: word must not contain any gray letters 
+        match_grays = True
+        for letter in known_grays: 
+            if letter in word: # Rule out a letter if its not in the Green/Yellow list
+                match_grays = False
+                break
+        if not match_grays:
+            continue # Skip this word it contains a forbidden gray letter
+
+        possible_matches.append(word)
+
+    if not possible_matches:
+        await ctx.send(f"{mention}\n❌ I couldn't find ANY words that fit your current clues! (Did you make a mistake?)")
     else:
-        await ctx.send(f"{mention}\n ❌ No valid words found using the letters in **{user_word}**.")
+        random.shuffle(possible_matches) # Shuffle results for better matches 
+
+        suggestions = possible_matches[:5] # Only show the top 5 best matches 
+        result_str = ", ".join(suggestions)
+        
+        await ctx.send(f"{mention},\n💡 **Hints found:** {len(possible_matches)}\nHere are some options:\n`{result_str}`")
 
 @bot.command()
 async def surrender(ctx):
@@ -290,7 +333,7 @@ async def help(ctx):
         name = "🔤 !guess [WORD]", value = "Make a guess in your active game. (Example: `!guess APPLE`)", inline = False
     )
     embed.add_field(
-        name = "🧩 !unscramble [WORD]", value = "Unscramble a word for a better guessed attempt in Wordle", inline = False
+        name = "🤫 !hint", value = "Reveals BEST possible options to guide you in Wordle", inline = False
     )
     embed.add_field(
         name = "📈 !stats", value = "View your win/loss record", inline = False
