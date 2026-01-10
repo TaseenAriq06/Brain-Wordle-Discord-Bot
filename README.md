@@ -31,7 +31,7 @@
 
 * Cloud Deployment: Migrate from local hosting to a 24/7 cloud service (Discloud or Railway).
 * UI Overhaul: enhance the !play interface with Discord Embeds for a cleaner look.
-* Stats System: Track user wins, streaks, and average guess counts using a database (SQLite).
+* Stats System: Track user wins, streaks, and average guess counts using a JSON file ✅
 
 ---
 
