@@ -20,9 +20,15 @@
   ![Brain Wordle Guess](https://github.com/TaseenAriq06/Brain-Wordle-Discord-Bot/blob/5f8c8e21bbd158dfc9acfc7df4a7d2d58256d8f9/assets/guess.jpg)
 
 ### 🛠️ Utilities
-* **`!nyt`**: Connects to the **New York Times API** to retrieve the official daily answer. *Spoiler tags included!*
-* **`!unscramble [LETTERS]`**: Uses an anagram algorithm to find all valid 5-letter words from a scrambled input. Great for when you are stuck!
-* **`!help`**: Displays a clean embed listing all available commands.
+| Command | Usage | Description |
+| :--- | :--- | :--- |
+| **!help** | `!help` | Displays a custom embed listing all available commands. |
+| **!play** | `!play` | Starts a new, private Wordle game session for the user. |
+| **!guess** | `!guess [word]` | Submits a 5-letter word attempt. Returns the board with emojis indicating letter accuracy (🟩 Green, 🟨 Yellow, ⬜ Gray). |
+| **!stats** | `!stats` | Displays your personal win/loss record, win percentage, and streak history. |
+| **!surrender** | `!surrender` | Gives up on the current word to reveal the answer (Counts as a loss). |
+| **!unscramble**| `!unscramble [abcde]` | Takes 5 letters and returns all valid dictionary words that can be formed using those exact letters. |
+| **!nyt** | `!nyt` | Connects to the NYT API to retrieve the *official* Wordle answer for the current date (hidden behind a spoiler tag). |
 
 ---
 
