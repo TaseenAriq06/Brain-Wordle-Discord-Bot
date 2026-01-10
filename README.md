@@ -27,7 +27,7 @@
 | **!guess** | `!guess [word]` | Submits a 5-letter word attempt. Returns the board with emojis indicating letter accuracy (🟩 Green, 🟨 Yellow, ⬜ Gray). |
 | **!stats** | `!stats` | Displays your personal win/loss record, win percentage, and streak history. |
 | **!surrender** | `!surrender` | Gives up on the current word to reveal the answer (Counts as a loss). |
-| **!unscramble**| `!unscramble [abcde]` | Takes 5 letters and returns all valid dictionary words that can be formed using those exact letters. |
+| **!hint**| `!hint` | Scans the dictionary using your current Green, Yellow, and Gray clues to suggest valid words that fit your specific puzzle. |
 | **!nyt** | `!nyt` | Connects to the NYT API to retrieve the *official* Wordle answer for the current date (hidden behind a spoiler tag). |
 
 ---
