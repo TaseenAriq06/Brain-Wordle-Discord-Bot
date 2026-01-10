@@ -17,8 +17,8 @@
     * ⬜ **White**: Letter not in the word.
 * **Visual Interface**: The board updates dynamically, showing "Found Letters" and "Valid Letters" at the top for easy tracking.
 
-  ![Brain Wordle Hint](https://github.com/TaseenAriq06/Brain-Wordle-Discord-Bot/blob/5c1ac801f22dd6a1e896256ec92e5a8ac3d8d6b1/assets/visual.webp)
-  <img src="https://github.com/TaseenAriq06/Brain-Wordle-Discord-Bot/blob/f4f2175546776c768702637a862df1a0d4d8fce2/assets/stats.webp" width="200" height="200" />
+  <img src="https://github.com/TaseenAriq06/Brain-Wordle-Discord-Bot/blob/f4f2175546776c768702637a862df1a0d4d8fce2/assets/stats.webp" width="400" height="600" />
+  <img src="https://github.com/TaseenAriq06/Brain-Wordle-Discord-Bot/blob/5c1ac801f22dd6a1e896256ec92e5a8ac3d8d6b1/assets/visual.webp" width="500" height="600" />
 
 ### 🛠️ Utilities
 | Command | Usage | Description |
