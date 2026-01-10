@@ -1,4 +1,4 @@
-![Brain Wordle Banner](https://github.com/TaseenAriq06/Brain-Wordle-Discord-Bot/blob/695b31c4382b1302e76ed866c59921eb0bf47ecd/assets/save.jpg)
+![Brain Wordle Banner](https://github.com/TaseenAriq06/Brain-Wordle-Discord-Bot/blob/6864862b1c9839f875ac736d29bd6f3dfe88c0ea/assets/banner2.png)
 # 🧠 Brain Wordle - Discord Bot
 
 > A fully functional Discord bot that brings the popular Wordle game directly into your server. Built with Python and the Discord API.
