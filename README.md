@@ -1,4 +1,4 @@
-![Brain Wordle Banner](https://github.com/TaseenAriq06/Brain-Wordle-Discord-Bot/blob/9bd5514932bcf05b360fb3d9e297317a8c8c335a/assets/save.jpg)
+![Brain Wordle Banner](https://github.com/TaseenAriq06/Brain-Wordle-Discord-Bot/blob/695b31c4382b1302e76ed866c59921eb0bf47ecd/assets/save.jpg)
 # 🧠 Brain Wordle - Discord Bot
 
 > A fully functional Discord bot that brings the popular Wordle game directly into your server. Built with Python and the Discord API.
@@ -17,8 +17,8 @@
     * ⬜ **White**: Letter not in the word.
 * **Visual Interface**: The board updates dynamically, showing "Found Letters" and "Valid Letters" at the top for easy tracking.
 
-  ![Brain Wordle Guess](https://github.com/TaseenAriq06/Brain-Wordle-Discord-Bot/blob/5f8c8e21bbd158dfc9acfc7df4a7d2d58256d8f9/assets/guess.jpg)
-  ![Brain Wordle Hint](https://github.com/TaseenAriq06/Brain-Wordle-Discord-Bot/blob/5c1ac801f22dd6a1e896256ec92e5a8ac3d8d6b1/assets/visual.webp)
+  <img src="https://github.com/TaseenAriq06/Brain-Wordle-Discord-Bot/blob/f4f2175546776c768702637a862df1a0d4d8fce2/assets/stats.webp" width="400" height="500" />
+  <img src="https://github.com/TaseenAriq06/Brain-Wordle-Discord-Bot/blob/5c1ac801f22dd6a1e896256ec92e5a8ac3d8d6b1/assets/visual.webp" width="300" height="600" />
 
 ### 🛠️ Utilities
 | Command | Usage | Description |
