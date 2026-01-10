@@ -29,6 +29,19 @@ def update_stat(user_id, result):
 
     if user_id not in data:         # initialize if user's stats don't exist yet
         data[user_id] = {"wins": 0, "losses": 0, "streak": 0, "max_streak": 0}
+    
+    current_wins = data[user_id]["wins"]
+    current_losses = data[user_id]["losses"]
+    total = current_wins + current_losses
+
+    # Calculate the old win rate
+    if total > 0:
+        old_rate = round((current_wins / total) * 100, 1)
+    else:
+        old_rate = 0.0
+    
+    # Save this to the database
+    data[user_id]["prev_win_rate"] = old_rate
 
     if result == 'win':
         data[user_id]["wins"] += 1  # update user's win count by 1 if result equals the target word

@@ -243,11 +243,23 @@ async def stats(ctx):
 
     wins = data["wins"]
     losses = data["losses"]
+    streak = data["streak"]
+    max_streak = data["max_streak"]
+
+    prev_win_rate = data.get("prev_win_rate", 0)
+
     total = wins + losses
     win_rate = round((wins / total) * 100, 1) if total > 0 else 0 # calculation for win rate percentage
 
+    if win_rate > prev_win_rate:
+        trend = "📈"
+    elif win_rate < prev_win_rate:
+        trend = "📉"
+    else:
+        trend = "🆗"
+
     embed = discord.Embed(
-        title = f"📊 Stats for {ctx.message.author.display_name}",
+        title = f"📊 Stats for {ctx.author.display_name}",
         description = "Here are a list of your stats for Brain Wordle",
         color=0xffd700
     )
@@ -256,9 +268,9 @@ async def stats(ctx):
     embed.add_field( name = "Wins", value = str(wins), inline = True )
     embed.add_field( name = "Loss", value = str(losses), inline = True)
     embed.add_field( name = "Games", value=str(total), inline=True)
-    embed.add_field( name = "Win Rate", value = f"{win_rate}%", inline = True )
-    embed.add_field( name = "Streak", value = f"🔥 {data['streak']}", inline=True )
-    embed.add_field( name = "Best Streak", value = f"🏆 {data['max_streak']}", inline=True)
+    embed.add_field( name = "Win Rate", value = f"{win_rate}% {trend}", inline = True )
+    embed.add_field( name = "Streak", value = f"🔥 {streak}", inline=True )
+    embed.add_field( name = "Best Streak", value = f"🏆 {max_streak}", inline=True)
 
     await ctx.send(embed=embed)
 
