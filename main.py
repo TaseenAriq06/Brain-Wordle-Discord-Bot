@@ -131,32 +131,43 @@ async def guess(ctx, user_guess: str):
             return
 
     # Logic for Coloring (Green/Yellow/White)
-    row_emojis = ""
-    for i in range (5):
+    target_counts = {}
+    for char in target_word:
+        # Frequency Count: Count letter availability in the target word
+        target_counts[char] = target_counts.get(char, 0) + 1 
+
+    result = ["⬜ "] * 5 # Default state of 5 gray letters
+
+    # Find GREEN matches perfectly
+    for i in range(5):
         letter = user_guess[i]
+        if letter == target_word[i]:
+            result[i] = "🟩 "
+            target_counts[letter] -= 1
 
-        # Case 1: Green for correct letter, correct spot
-        if user_guess[i] == target_word[i]:
-            row_emojis += "🟩 "
             known_greens[i] = letter
-
-            # If letter is found in green, remove from yellow list
             if letter in known_yellows:
                 known_yellows.remove(letter)
 
-        # Case 2: Yellow for correct letter, wrong placement
-        elif user_guess[i] in target_word:
-            row_emojis += "🟨 "
+    # Find YELLOW matches which are the remaining letters
+    for i in range(5):
+        letter = user_guess[i]
+        if result[i] == "🟩 ": # Skip if we already marked it Green
+            continue
             
-            # Only add to yellows if we haven't found it in the correct spot
+        # Check if letter exists in the target word and you still have counts left 
+        if letter in target_word and target_counts[letter] > 0:
+            result[i] = "🟨 "
+            target_counts[letter] -= 1
+
+            # Update status display lists
             if letter not in known_greens:
                 known_yellows.add(letter)
-        # Case 3: Letter is not in the word at all
-        else:
-            row_emojis += "⬜ "
-    
-    # Format the row to show emojis + the actual word
-    full_row = f"{row_emojis}  (`{user_guess}`)"
+
+    # If there is no counts left, letters stay gray
+    # Build the final row string
+    row_emojis = "".join(result)
+    full_row = f"{row_emojis} (`{user_guess}`)"
     history.append(full_row)
 
     # Prepare status header (shows which letter user has found so far)
@@ -205,6 +216,23 @@ async def unscramble(ctx, user_word: str):
         await ctx.send(f"❌ No valid words found using the letters in **{user_word}**.")
 
 @bot.command()
+async def surrender(ctx):
+    if ctx.author.id not in active_games: # Check if the user is actually playing
+        await ctx.send("❌ You aren't playing right now! Type `!play` to start.")
+        return
+
+    # Retrieve the secret word so you can show the user
+    game_data = active_games[ctx.author.id]
+    target_word = game_data["word"]
+
+    # This counts as a loss for giving up
+    storage.update_stat(ctx.author.id, 'loss')
+
+    # End the game
+    await ctx.send(f"🏳️ **You surrendered.**\nThe secret word was: ||**{target_word}**||\n\n📉 This has been recorded as a **loss**.")
+    del active_games[ctx.author.id]
+
+@bot.command()
 async def stats(ctx):
     data = storage.get_stats(ctx.author.id) # use Discord ID to retrieve data from the specific user running !stats
 
@@ -248,6 +276,9 @@ async def help(ctx):
     )
     embed.add_field(
         name = "📈 !stats", value = "View your win/loss record", inline = False
+    )
+    embed.add_field(
+        name = "❌ !surrender", value = "Surrender and view the correct word immediately", inline = False
     )
 
     embed.set_footer(text="Bot created by TazCtrl")
