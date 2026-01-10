@@ -172,7 +172,7 @@ async def guess(ctx, user_guess: str):
     if user_guess == target_word:
         storage.update_stat(ctx.author.id, 'win') # update the win count by 1
 
-        await ctx.send(f"{final_message}\n\n🎉 **YOU WON!** The word was **{target_word}**.")
+        await ctx.send(f"{final_message}\n\n🎉 **YOU WON!** The word was **{target_word}.\n🤔 Attempts:** {attempts_used}")
         del active_games[ctx.author.id] # Clear game from memory
     elif attempts_used >= 6:
         storage.update_stat(ctx.author.id, 'loss') # update the loss count by 1
