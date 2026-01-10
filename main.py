@@ -6,6 +6,7 @@ import os
 import requests
 import datetime
 import random
+import storage
 
 # Load environmental variables from the .env file to keep token safe
 load_dotenv()
@@ -169,9 +170,13 @@ async def guess(ctx, user_guess: str):
     attempts_used = len(history)
     
     if user_guess == target_word:
+        storage.update_stat(ctx.author.id, 'win') # update the win count by 1
+
         await ctx.send(f"{final_message}\n\n🎉 **YOU WON!** The word was **{target_word}**.")
         del active_games[ctx.author.id] # Clear game from memory
     elif attempts_used >= 6:
+        storage.update_stat(ctx.author.id, 'loss') # update the loss count by 1
+
         await ctx.send(f"{final_message}\n\n💀 **GAME OVER!** You ran out of guesses.\nThe word was: ||**{target_word}**||")
         del active_games[ctx.author.id] # Clear game from memory
     else:
@@ -199,34 +204,50 @@ async def unscramble(ctx, user_word: str):
     else:
         await ctx.send(f"❌ No valid words found using the letters in **{user_word}**.")
 
+@bot.command()
+async def stats(ctx):
+    data = storage.get_stats(ctx.author.id) # use Discord ID to retrieve data from the specific user running !stats
+
+    wins = data["wins"]
+    losses = data["losses"]
+    total = wins + losses
+    win_rate = round((wins / total) * 100, 1) if total > 0 else 0 # calculation for win rate percentage
+
+    embed = discord.Embed(
+        title = f"📊 Stats for {ctx.message.author.display_name}",
+        description = "Here are a list of your stats for Brain Wordle",
+        color=0xffd700
+    )
+
+    embed.add_field( name = "Wins", value = str(wins), inline = True )
+    embed.add_field( name = "Loss", value = str(losses), inline = True)
+    embed.add_field( name = "Games", value=str(total), inline=True)
+    embed.add_field( name = "Win Rate", value = f"{win_rate}%", inline = True )
+    embed.add_field( name = "Streak", value = f"🔥 {data['streak']}", inline=True )
+    embed.add_field( name = "Best Streak", value = f"🏆 {data['max_streak']}", inline=True)
+
+    await ctx.send(embed=embed)
+
 # HELP COMMAND (shows a list of commands you can use in discord chat)
 @bot.command()
 async def help(ctx):
     embed = discord.Embed(
-        title = "🤖 WordleMaster Bot Help",
-        description = "Here are the commands you can use:",
-        color = 0x92ed8a
-    )
-
-    embed.add_field(
-        name="🕵️ !nyt",
-        value = "Reveals today's official NYT Wordle answer (Spoiler tagged!)",
-        inline = False
+        title = "🤖 Brain Wordle Bot Help", description = "Here are the commands you can use:", color = 0x92ed8a
     )
     embed.add_field(
-        name = "🎮 !play",
-        value = "Starts a new unlimited Wordle game just for you.",
-        inline = False
+        name="🕵️ !nyt", value = "Reveals today's official NYT Wordle answer (Spoiler tagged!)", inline = False
     )
     embed.add_field(
-        name = "🔤 !guess [WORD]",
-        value = "Make a guess in your active game. (Example: `!guess APPLE`)",
-        inline = False
+        name = "🎮 !play", value = "Starts a new unlimited Wordle game just for you.", inline = False
     )
     embed.add_field(
-        name = "🧩 !unscramble [WORD]",
-        value = "Unscramble a word for a better guessed attempt in Wordle",
-        inline = False
+        name = "🔤 !guess [WORD]", value = "Make a guess in your active game. (Example: `!guess APPLE`)", inline = False
+    )
+    embed.add_field(
+        name = "🧩 !unscramble [WORD]", value = "Unscramble a word for a better guessed attempt in Wordle", inline = False
+    )
+    embed.add_field(
+        name = "📈 !stats", value = "View your win/loss record", inline = False
     )
 
     embed.set_footer(text="Bot created by TazCtrl")

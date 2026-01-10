@@ -6,6 +6,7 @@ token.txt
 # Python cache (Junk files)
 __pycache__/
 *.py[cod]
+stats.json
 
 # Logs
 *.log
