@@ -87,9 +87,10 @@ except:
 # GAME COMMANDS
 @bot.command()
 async def play(ctx):
+    mention = ctx.author.mention
     # Check if the user is already in an active game
     if ctx.author.id in active_games:
-        await ctx.send("❌ You already have a game running! Finish it or just keep guessing.")
+        await ctx.send(f"{mention},\n❌ **You already have a game running! Finish it or just keep guessing.**")
         return
     
     # Pick a random word and initialize game state
@@ -100,12 +101,13 @@ async def play(ctx):
         "greens": ["_", "_", "_", "_", "_"],    # Tracks known correct positions
         "yellows": set()                        # Tracks known valid letters (use hashset to prevent dupes)
     }
-    await ctx.send(f"🎮 **New Game Started!**\nI've picked a secret 5-letter word.\nType `!guess WORD` to play!")
+    await ctx.send(f"{mention}, 🎮 **New Game Started!**\nI've picked a secret 5-letter word.\nType `!guess WORD` to play!")
 
 @bot.command()
 async def guess(ctx, user_guess: str):
+    mention = ctx.author.mention
     if ctx.author.id not in active_games:
-        await ctx.send("❌ You aren't playing right now! Type `!play` to start.")
+        await ctx.send(f"{mention},\n❌ **You already have a game running! Finish it or just keep guessing.**")
         return
     
     # Retrieve user's specific game data
@@ -118,16 +120,16 @@ async def guess(ctx, user_guess: str):
     user_guess = user_guess.upper()
 
     if len(user_guess) != 5:
-        await ctx.send("⚠️ Guess must be exactly 5 letters!")
+        await ctx.send(f"{mention}, ⚠️ Guess must be exactly 5 letters!")
         return
     if user_guess not in word_list:
-        await ctx.send(f"❌ **{user_guess}** is not a valid word in my dictionary!")
+        await ctx.send(f"{mention},\n❌ **{user_guess}** is not a valid word in my dictionary!")
         return
     
     # Check for a duplicate word and set it invalid
     for past_entry in history:
         if f"(`{user_guess}`)" in past_entry:
-            await ctx.send(f"⚠️ You already guessed **{user_guess}**! Try a different word.")
+            await ctx.send(f"{mention},\n ⚠️ You already guessed **{user_guess}**! Try a different word.")
             return
 
     # Logic for Coloring (Green/Yellow/White)
@@ -173,7 +175,7 @@ async def guess(ctx, user_guess: str):
     # Prepare status header (shows which letter user has found so far)
     green_display = " ".join(known_greens)
     yellow_display = ", ".join(sorted(known_yellows)) if known_yellows else "None"
-    status_header = f"💚 **Correct:** `{green_display}`\n💛 **Valid:** `{yellow_display}`\n"
+    status_header = f"{mention},\n💚 **Correct:** `{green_display}`\n💛 **Valid:** `{yellow_display}`\n"
 
     # Build Final Response & Check Win/Loss
     board_display = "\n".join(history)
@@ -197,9 +199,10 @@ async def guess(ctx, user_guess: str):
 @bot.command()
 async def unscramble(ctx, user_word: str):
     user_word = user_word.upper()
+    mention = ctx.author.mention
 
     if len(user_word) != 5:
-        await ctx.send("⚠️ Please provide exactly 5 letters!")
+        await ctx.send(f"{mention},\n ⚠️ Please provide exactly 5 letters!")
         return
     # Sort the user's letters to compare against sorted dictionary words
     target_word = sorted(user_word)
@@ -211,14 +214,16 @@ async def unscramble(ctx, user_word: str):
     
     if found_words:
         result_string = ", ".join(found_words)
-        await ctx.send(f"🧩 **Unscrambled options for {user_word}:**\n`{result_string}`")
+        await ctx.send(f"{mention}\n 🧩 **Unscrambled options for {user_word}:**\n`{result_string}`")
     else:
-        await ctx.send(f"❌ No valid words found using the letters in **{user_word}**.")
+        await ctx.send(f"{mention}\n ❌ No valid words found using the letters in **{user_word}**.")
 
 @bot.command()
 async def surrender(ctx):
+    mention = ctx.author.mention
+
     if ctx.author.id not in active_games: # Check if the user is actually playing
-        await ctx.send("❌ You aren't playing right now! Type `!play` to start.")
+        await ctx.send(f"{mention},\n**❌ You aren't playing right now! Type `!play` to start.**")
         return
 
     # Retrieve the secret word so you can show the user
@@ -229,7 +234,7 @@ async def surrender(ctx):
     storage.update_stat(ctx.author.id, 'loss')
 
     # End the game
-    await ctx.send(f"🏳️ **You surrendered.**\nThe secret word was: ||**{target_word}**||\n\n📉 This has been recorded as a **loss**.")
+    await ctx.send(f"{mention}\n 🏳️ **You surrendered.**\nThe secret word was: ||**{target_word}**||\n\n📉 This has been recorded as a **loss**.")
     del active_games[ctx.author.id]
 
 @bot.command()
@@ -246,6 +251,7 @@ async def stats(ctx):
         description = "Here are a list of your stats for Brain Wordle",
         color=0xffd700
     )
+    embed.set_thumbnail(url=ctx.author.display_avatar.url) # Added a image section for stats
 
     embed.add_field( name = "Wins", value = str(wins), inline = True )
     embed.add_field( name = "Loss", value = str(losses), inline = True)
