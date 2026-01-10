@@ -18,6 +18,7 @@
 * **Visual Interface**: The board updates dynamically, showing "Found Letters" and "Valid Letters" at the top for easy tracking.
 
   ![Brain Wordle Guess](https://github.com/TaseenAriq06/Brain-Wordle-Discord-Bot/blob/5f8c8e21bbd158dfc9acfc7df4a7d2d58256d8f9/assets/guess.jpg)
+  ![Brain Wordle Hint](https://github.com/TaseenAriq06/Brain-Wordle-Discord-Bot/blob/5c1ac801f22dd6a1e896256ec92e5a8ac3d8d6b1/assets/visual.webp)
 
 ### 🛠️ Utilities
 | Command | Usage | Description |
