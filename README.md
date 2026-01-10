@@ -27,7 +27,7 @@
 ---
 
 ## 🗺️ Roadmap & Future Goals
-* This project is currently in **active development**. Here are the planned updates:
+### This project is currently in **active development**. Here are the planned updates:
 
 * Cloud Deployment: Migrate from local hosting to a 24/7 cloud service (Discloud or Railway).
 * UI Overhaul: enhance the !play interface with Discord Embeds for a cleaner look.
