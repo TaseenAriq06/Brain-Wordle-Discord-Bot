@@ -108,7 +108,7 @@ async def play(ctx):
 async def guess(ctx, user_guess: str):
     mention = ctx.author.mention
     if ctx.author.id not in active_games:
-        await ctx.send(f"{mention},\n❌ **You already have a game running! Finish it or just keep guessing.**")
+        await ctx.send(f"{mention},\n**❌ You aren't playing right now! Type `!play` to start.**")
         return
     
     # Retrieve user's specific game data
