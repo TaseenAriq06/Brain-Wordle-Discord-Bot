@@ -199,7 +199,9 @@ async def guess(ctx, user_guess: str):
         await ctx.send(f"{final_message}\n\n💀 **GAME OVER!** You ran out of guesses.\nThe word was: ||**{target_word}**||")
         del active_games[ctx.author.id] # Clear game from memory
     else:
-        await ctx.send(f"{final_message}\n\n**{6 - attempts_used}** guesses remaining.")
+        remaining = 6 - attempts_used
+        word = "guess" if remaining == 1 else "guesses"
+        await ctx.send(f"{final_message}\n\n**{remaining}** {word} remaining.")
 
 # UTILITY COMMANDS
 @bot.command()
@@ -256,10 +258,10 @@ async def hint(ctx):
     else:
         random.shuffle(possible_matches) # Shuffle results for better matches 
 
-        suggestions = possible_matches[:5] # Only show the top 5 best matches 
+        suggestions = possible_matches[:10] # Only show the top 10 best matches 
         result_str = ", ".join(suggestions)
         
-        await ctx.send(f"{mention},\n💡 **Hints found:** {len(possible_matches)}\nHere are some options:\n`{result_str}`")
+        await ctx.send(f"{mention},\n💡 **Hints found:** {len(possible_matches)}\nHere are 10 options:\n`{result_str}`")
 
 @bot.command()
 async def surrender(ctx):
