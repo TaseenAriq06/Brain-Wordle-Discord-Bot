@@ -223,6 +223,14 @@ async def hint(ctx):
     possible_matches = []
 
     for word in word_list: # Iterate through every word in the dictionary 
+        already_guessed = False
+        for entry in game_data:
+            if f"({word})" in entry:        # Makes sure the !hint does not suggest a word you tried already
+                already_guessed = True
+                break
+        if already_guessed:
+            continue
+
         # Constraint 1: Correct Green Positions: word must have exact same letter in exact spot to be green
         match_greens = True
         for i in range(5):
@@ -259,9 +267,10 @@ async def hint(ctx):
         random.shuffle(possible_matches) # Shuffle results for better matches 
 
         suggestions = possible_matches[:10] # Only show the top 10 best matches 
+        shown_count = len(suggestions)
         result_str = ", ".join(suggestions)
         
-        await ctx.send(f"{mention},\n💡 **Hints found:** {len(possible_matches)}\nHere are 10 options:\n`{result_str}`")
+        await ctx.send(f"{mention},\n💡 **Hints found:** {len(possible_matches)}\nHere are **{shown_count}** options:\n`{result_str}`")
 
 @bot.command()
 async def surrender(ctx):
