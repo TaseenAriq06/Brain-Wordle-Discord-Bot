@@ -180,7 +180,7 @@ class Gameplay(commands.Cog):
                     break
             if not match_greens:
                 continue # Skip this word since it has a conflict with green clue
-            
+                
             # Constraint 2: Yellow Letters Exists: word must contain all yellow letters somewhere
             match_yellows = True
             for letter in known_yellows:
