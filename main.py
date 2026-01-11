@@ -100,7 +100,8 @@ async def play(ctx):
         "history": [],                          # Stores past guesses in visual rows
         "greens": ["_", "_", "_", "_", "_"],    # Tracks known correct positions
         "yellows": set(),                       # Tracks known valid letters (use hashset to prevent dupes)
-        "grays": set()                          # Tracks bad letters which are gray
+        "grays": set(),                          # Tracks bad letters which are gray
+        "bad_positions": [set(), set(), set(), set(), set()] # List of 5 sets to hold specific index values for each letter
     }
     await ctx.send(f"{mention}, 🎮 **New Game Started!**\nI've picked a secret 5-letter word.\nType `!guess WORD` to play!")
 
@@ -166,6 +167,7 @@ async def guess(ctx, user_guess: str):
             # Update status display lists
             if letter not in known_greens:
                 known_yellows.add(letter)
+            game_data["bad_positions"][i].add(letter)
 
     # If there is no counts left, letters stay gray
     # Build the final row string
@@ -217,6 +219,8 @@ async def hint(ctx):
     known_greens = game_data["greens"]
     known_yellows = game_data["yellows"]
     known_grays = game_data["grays"]
+    history = game_data["history"]
+    bad_positions = game_data["bad_positions"]
 
     await ctx.send("🧠 **Thinking...** scanning dictionary for matches...")
 
@@ -224,7 +228,7 @@ async def hint(ctx):
 
     for word in word_list: # Iterate through every word in the dictionary 
         already_guessed = False
-        for entry in game_data:
+        for entry in history:
             if f"({word})" in entry:        # Makes sure the !hint does not suggest a word you tried already
                 already_guessed = True
                 break
@@ -258,6 +262,15 @@ async def hint(ctx):
                 break
         if not match_grays:
             continue # Skip this word it contains a forbidden gray letter
+
+        # Constraint 4: If a yellow letter is at a specific spot, do not suggest hints that contain yellow letters in the same spot
+        match_positions = True      
+        for i in range(5):
+            if word[i] in bad_positions[i]:
+                match_positions = False
+                break
+        if not match_positions:
+            continue
 
         possible_matches.append(word)
 
