@@ -7,15 +7,15 @@ import datetime
 class Utility(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-
-    @commands.command()
+    
+    # NYT Command
+    @commands.command() 
     async def nyt(self, ctx):
         # Get today's date formatted for the API URL (YYYY-MM-DD)
         date_string = datetime.date.today().strftime("%Y-%m-%d")
         url = f"https://www.nytimes.com/svc/wordle/v2/{date_string}.json"
 
         today = datetime.date.today()
-
         pretty_date = f"{today.strftime('%B')} {today.day}, {today.year}"
 
         try:
@@ -35,6 +35,7 @@ class Utility(commands.Cog):
         except Exception as e:
             await ctx.send(f"⚠️ Something went wrong: {e}")
 
+    # STATS Command
     @commands.command()
     async def stats(self, ctx):
         data = storage.get_stats(ctx.author.id) # use Discord ID to retrieve data from the specific user running !stats
@@ -63,40 +64,27 @@ class Utility(commands.Cog):
         )
         embed.set_thumbnail(url=ctx.author.display_avatar.url) # Added a image section for stats
 
-        embed.add_field( name = "Wins", value = str(wins), inline = True )
-        embed.add_field( name = "Loss", value = str(losses), inline = True)
-        embed.add_field( name = "Games", value=str(total), inline=True)
-        embed.add_field( name = "Win Rate", value = f"{win_rate}% {trend}", inline = True )
-        embed.add_field( name = "Streak", value = f"🔥 {streak}", inline=True )
-        embed.add_field( name = "Best Streak", value = f"🏆 {max_streak}", inline=True)
+        embed.add_field(name = "Wins", value = str(wins), inline = True)
+        embed.add_field(name = "Loss", value = str(losses), inline = True)
+        embed.add_field(name = "Games", value=str(total), inline=True)
+        embed.add_field(name = "Win Rate", value = f"{win_rate}% {trend}", inline = True)
+        embed.add_field(name = "Streak", value = f"🔥 {streak}", inline=True)
+        embed.add_field(name = "Best Streak", value = f"🏆 {max_streak}", inline=True)
 
         await ctx.send(embed=embed)
 
-    # HELP COMMAND (shows a list of commands you can use in discord chat)
+    # HELP Command (shows a list of commands you can use in discord chat)
     @commands.command()
     async def help(self, ctx):
         embed = discord.Embed(
             title = "🤖 Brain Wordle Bot Help", description = "Here are the commands you can use:", color = 0x92ed8a
         )
-        embed.add_field(
-            name="🕵️ !nyt", value = "Reveals today's official NYT Wordle answer (Spoiler tagged!)", inline = False
-        )
-        embed.add_field(
-            name = "🎮 !play", value = "Starts a new unlimited Wordle game just for you.", inline = False
-        )
-        embed.add_field(
-            name = "🔤 !guess [WORD]", value = "Make a guess in your active game. (Example: `!guess APPLE`)", inline = False
-        )
-        embed.add_field(
-            name = "🤫 !hint", value = "Reveals BEST possible options to guide you in Wordle", inline = False
-        )
-        embed.add_field(
-            name = "📈 !stats", value = "View your win/loss record", inline = False
-        )
-        embed.add_field(
-            name = "❌ !surrender", value = "Surrender and view the correct word immediately", inline = False
-        )
-
+        embed.add_field(name = "🕵️ !nyt", value = "Reveals today's official NYT Wordle answer (Spoiler tagged!)", inline = False)
+        embed.add_field(name = "🎮 !play", value = "Starts a new unlimited Wordle game just for you.", inline = False)
+        embed.add_field(name = "🔤 !guess [WORD]", value = "Make a guess in your active game. (Example: `!guess APPLE`)", inline = False)
+        embed.add_field(name = "🤫 !hint", value = "Reveals BEST possible options to guide you in Wordle", inline = False)
+        embed.add_field(name = "📈 !stats", value = "View your win/loss record", inline = False)
+        embed.add_field(name = "❌ !surrender", value = "Surrender and view the correct word immediately", inline = False)
         embed.set_footer(text="Bot created by TazCtrl")
         await ctx.send(embed=embed)
         
