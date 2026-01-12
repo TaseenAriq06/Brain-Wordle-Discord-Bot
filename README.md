@@ -30,6 +30,8 @@
 | **!surrender** | `!surrender` | Gives up on the current word to reveal the answer (Counts as a loss). |
 | **!hint**| `!hint` | Scans the dictionary using your current Green, Yellow, and Gray clues to suggest valid words that fit your specific puzzle. |
 | **!nyt** | `!nyt` | Connects to the NYT API to retrieve the *official* Wordle answer for the current date (hidden behind a spoiler tag). |
+| **!scramble** | `!scramble` | Displays a given word with shuffled characters for you to unscramble correctly in random attempts |
+| **!unscramble** | `!unscramble [WORD]` | Unscramble a word given by the bot correctly to win |
 
 ---
 
