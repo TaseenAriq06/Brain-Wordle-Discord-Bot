@@ -259,6 +259,7 @@ class Gameplay(commands.Cog):
             return
         # 2. Pick a random word from self.
         target = random.choice(self.word_list)
+        rand_attempts = random.randint(3,10)
         # 3. Shuffle the letters (Turn to list -> shuffle -> join)
         char_list = list(target)
         random.shuffle(char_list)
@@ -266,14 +267,16 @@ class Gameplay(commands.Cog):
 
         self.scramble_games[ctx.author.id] = {
             "word" : target,
-            "attempts" : 5
+            "attempts" : rand_attempts,
+            "history" : []
         }
-        await ctx.send(f"{mention}, 🌪️ **Unscramble this:** `{shuffled_word}`\nType `!unscramble [WORD]` to solve it!")
+        await ctx.send(f"{mention}, 🌪️ **Unscramble this:** `{shuffled_word}`\nType `!unscramble [WORD]` to solve it!\nYou have **{rand_attempts}** attempts ONLY!")
 
     # UNSCRAMBLE command
     @commands.command()
     async def unscramble(self, ctx, guess: str):
         mention = ctx.author.mention
+        guess = guess.upper()
         # 1. Check if user is playing
         if ctx.author.id not in self.scramble_games:
             await ctx.send(f"{mention}, You are not playing! Type `!scramble` to start!")
@@ -282,6 +285,7 @@ class Gameplay(commands.Cog):
         game_data = self.scramble_games[ctx.author.id]
         correct_answer = game_data["word"]
         attempts_left = game_data["attempts"]
+        hist = game_data["history"]
 
         if len(guess) != 5:
             await ctx.send(f"{mention}, ⚠️ Guess must be exactly 5 letters!")
@@ -301,8 +305,14 @@ class Gameplay(commands.Cog):
             await ctx.send(f"{mention}, ⚠️ These letters are not in the word: **{bad_display}** (No attempt lost)")
             return
 
-        if guess.upper() == correct_answer.upper():
-            await ctx.send(f"{mention}, Nice job! The correct answer was **{correct_answer}**")
+        # Checks if user has already used the same word to unscramble
+        if guess in hist:
+            await ctx.send(f"{mention},\n ⚠️ You already guessed **{guess}**! Try a different word.")
+            return
+        hist.append(guess)
+
+        if guess == correct_answer.upper():
+            await ctx.send(f"{mention}, Nice job! The correct answer was **{correct_answer}**\nAttempts Used: {10-attempts_left}")
             del self.scramble_games[ctx.author.id]
         else:
             attempts_left -= 1
