@@ -85,6 +85,7 @@ class Utility(commands.Cog):
         embed.add_field(name = "🤫 !hint", value = "Reveals BEST possible options to guide you in Wordle", inline = False)
         embed.add_field(name = "📈 !stats", value = "View your win/loss record", inline = False)
         embed.add_field(name = "❌ !surrender", value = "Surrender and view the correct word immediately", inline = False)
+        embed.add_field(name = "🌪️ !scramble/!unscramble", value = "Bot shuffles a word and YOU have to unscramble the word", inline = False)
         embed.set_footer(text="Bot created by TazCtrl")
         await ctx.send(embed=embed)
         

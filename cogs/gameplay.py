@@ -1,6 +1,7 @@
 from discord.ext import commands
 import random
 import storage
+import random
 
 class Gameplay(commands.Cog):
     def __init__(self, bot):
@@ -240,6 +241,78 @@ class Gameplay(commands.Cog):
         # End the game
         await ctx.send(f"{mention}\n 🏳️ **You surrendered.**\nThe secret word was: ||**{target_word}**||\n\n📉 This has been recorded as a **loss**.")
         del self.active_games[ctx.author.id]
+
+    def __init__(self, bot):
+            self.bot = bot
+            self.active_games = {}
+            self.word_list = []
+            self.load_words()
+            self.scramble_games = {}
+
+    # SCRAMBLE command
+    @commands.command()
+    async def scramble(self, ctx):
+        mention = ctx.author.mention
+        # 1. Check if user is already playing a scramble game
+        if ctx.author.id in self.scramble_games:
+            await ctx.send(f"{mention}, You are already playing a scramble game")
+            return
+        # 2. Pick a random word from self.
+        target = random.choice(self.word_list)
+        # 3. Shuffle the letters (Turn to list -> shuffle -> join)
+        char_list = list(target)
+        random.shuffle(char_list)
+        shuffled_word = "".join(char_list)
+
+        self.scramble_games[ctx.author.id] = {
+            "word" : target,
+            "attempts" : 5
+        }
+        await ctx.send(f"{mention}, 🌪️ **Unscramble this:** `{shuffled_word}`\nType `!unscramble [WORD]` to solve it!")
+
+    # UNSCRAMBLE command
+    @commands.command()
+    async def unscramble(self, ctx, guess: str):
+        mention = ctx.author.mention
+        # 1. Check if user is playing
+        if ctx.author.id not in self.scramble_games:
+            await ctx.send(f"{mention}, You are not playing! Type `!scramble` to start!")
+            return
+        # 2. Check if guess == the saved word (make sure both are .upper())
+        game_data = self.scramble_games[ctx.author.id]
+        correct_answer = game_data["word"]
+        attempts_left = game_data["attempts"]
+
+        if len(guess) != 5:
+            await ctx.send(f"{mention}, ⚠️ Guess must be exactly 5 letters!")
+            return
+        
+        # Array to hold all invalid letters
+        invalid_letters = []
+
+        for char in guess.upper():
+            # Check if char is wrong AND if we haven't listed it already
+            if char not in correct_answer and char not in invalid_letters:
+                invalid_letters.append(char)
+        
+        # If the list is not empty, it means we found bad letters
+        if invalid_letters:
+            bad_display = ", ".join(invalid_letters)
+            await ctx.send(f"{mention}, ⚠️ These letters are not in the word: **{bad_display}** (No attempt lost)")
+            return
+
+        if guess.upper() == correct_answer.upper():
+            await ctx.send(f"{mention}, Nice job! The correct answer was **{correct_answer}**")
+            del self.scramble_games[ctx.author.id]
+        else:
+            attempts_left -= 1
+
+            if attempts_left == 0:
+                await ctx.send(f"{mention},\n💀 **Game Over!** You ran out of attempts.\nThe word was: **{correct_answer}**")
+                del self.scramble_games[ctx.author.id]
+            else:
+                self.scramble_games[ctx.author.id]["attempts"] = attempts_left
+                await ctx.send(f"{mention}\n❌ **Wrong!** Try again. ({attempts_left} attempts left)")
 
 async def setup(bot):
     await bot.add_cog(Gameplay(bot))
