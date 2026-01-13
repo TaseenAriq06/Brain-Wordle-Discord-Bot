@@ -24,11 +24,11 @@
 | Command | Usage | Description |
 | :--- | :--- | :--- |
 | **!help** | `!help` | Displays a custom embed listing all available commands. |
+| **!nyt** | `!nyt` | Connects to the NYT API to retrieve the *official* Wordle answer for the current date (hidden behind a spoiler tag). |
 | **!play** | `!play` | Starts a new, private Wordle game session for the user. |
 | **!guess** | `!guess [word]` | Submits a 5-letter word attempt. Returns the board with emojis indicating letter accuracy (🟩 Green, 🟨 Yellow, ⬜ Gray). |
 | **!stats** | `!stats` | Displays your personal win/loss record, win percentage, and streak history. |
 | **!surrender** | `!surrender` | Gives up on the current word to reveal the answer (Counts as a loss). |
-| **!nyt** | `!nyt` | Connects to the NYT API to retrieve the *official* Wordle answer for the current date (hidden behind a spoiler tag). |
 | **!scramble** | `!scramble` | Displays a given word with shuffled characters for you to unscramble correctly in random attempts |
 | **!unscramble** | `!unscramble [WORD]` | Unscramble a word given by the bot correctly to win |
 
