@@ -18,7 +18,7 @@
 * **Visual Interface**: The board updates dynamically, showing "Found Letters" and "Valid Letters" at the top for easy tracking.
 
   <img src="https://github.com/TaseenAriq06/Brain-Wordle-Discord-Bot/blob/f4f2175546776c768702637a862df1a0d4d8fce2/assets/stats.webp" width="400" height="500" />
-  <img src="https://github.com/TaseenAriq06/Brain-Wordle-Discord-Bot/blob/21f11bdab8f82e55018f40addba84ca2df05e033/assets/hint.webp" width="400" height="600" />
+  <img src="https://github.com/TaseenAriq06/Brain-Wordle-Discord-Bot/blob/21f11bdab8f82e55018f40addba84ca2df05e033/assets/hint.webp" width="350" height="600" />
 
 ### 🛠️ Utilities
 | Command | Usage | Description |
@@ -28,7 +28,6 @@
 | **!guess** | `!guess [word]` | Submits a 5-letter word attempt. Returns the board with emojis indicating letter accuracy (🟩 Green, 🟨 Yellow, ⬜ Gray). |
 | **!stats** | `!stats` | Displays your personal win/loss record, win percentage, and streak history. |
 | **!surrender** | `!surrender` | Gives up on the current word to reveal the answer (Counts as a loss). |
-| **!hint**| `!hint` | Scans the dictionary using your current Green, Yellow, and Gray clues to suggest valid words that fit your specific puzzle. |
 | **!nyt** | `!nyt` | Connects to the NYT API to retrieve the *official* Wordle answer for the current date (hidden behind a spoiler tag). |
 | **!scramble** | `!scramble` | Displays a given word with shuffled characters for you to unscramble correctly in random attempts |
 | **!unscramble** | `!unscramble [WORD]` | Unscramble a word given by the bot correctly to win |
