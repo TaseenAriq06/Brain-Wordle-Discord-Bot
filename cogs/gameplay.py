@@ -47,15 +47,17 @@ class Gameplay(commands.Cog):
     
         # Pick a random word and initialize game state
         secret_word = random.choice(self.word_list)
+        allowed_hints = random.randint(2, 5)
         self.active_games[ctx.author.id] = {
-            "word" : secret_word, 
+            "word" : secret_word,
+            "hints_left" : allowed_hints,                        # Stores the number of hints you have
             "history": [],                                       # Stores past guesses in visual rows
             "greens": ["_", "_", "_", "_", "_"],                 # Tracks known correct positions
             "yellows": set(),                                    # Tracks known valid letters (use hashset to prevent dupes)
             "grays": set(),                                      # Tracks bad letters which are gray
             "bad_positions": [set(), set(), set(), set(), set()] # List of 5 sets to hold specific index values for each letter
         }
-        await ctx.send(f"{mention}, 🎮 **New Game Started!**\nI've picked a secret 5-letter word.\nType `!guess WORD` to play!")
+        await ctx.send(f"{mention}, 🎮 **New Game Started!**\nI've picked a secret 5-letter word.\nType `!guess WORD` to play!\n💡 **Hints allowed: ** {allowed_hints}")
 
     # GUESS Command
     @commands.command()
@@ -171,6 +173,13 @@ class Gameplay(commands.Cog):
     
         # Get the current game constraints from memory
         game_data = self.active_games[ctx.author.id]
+
+        if game_data["hints_left"] == 0:
+            await ctx.send(f"{mention}, 🚫 **No hints left!** You used them all.")
+            return
+        game_data["hints_left"] -= 1
+        remaining = game_data["hints_left"]
+
         known_greens = game_data["greens"]
         known_yellows = game_data["yellows"]
         known_grays = game_data["grays"]
@@ -230,7 +239,7 @@ class Gameplay(commands.Cog):
             possible_matches.append(word)
 
         if not possible_matches:
-            await ctx.send(f"{mention}\n❌ I couldn't find ANY words that fit your current clues! (Did you make a mistake?)")
+            await ctx.send(f"{mention}, ❌ No words found! (Hint used anyway. {remaining} left)")
         else:
             random.shuffle(possible_matches) # Shuffle results for better matches 
 
@@ -238,7 +247,7 @@ class Gameplay(commands.Cog):
             shown_count = len(suggestions)
             result_str = ", ".join(suggestions)
             
-            await ctx.send(f"{mention},\n💡 **Hints found:** {len(possible_matches)}\nHere are **{shown_count}** options:\n`{result_str}`")
+            await ctx.send(f"{mention},\n💡 **Hints found:** {len(possible_matches)}\nHere are **{shown_count}** options:\n`{result_str}`\n\n**🤫 Hints Remaining:** {remaining}")
     
     # SURRENDER COMMAND
     @commands.command()

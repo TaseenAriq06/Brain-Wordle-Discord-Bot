@@ -82,7 +82,6 @@ class Utility(commands.Cog):
         embed.add_field(name = "🕵️ !nyt", value = "Reveals today's official NYT Wordle answer (Spoiler tagged!)", inline = False)
         embed.add_field(name = "🎮 !play", value = "Starts a new unlimited Wordle game just for you.", inline = False)
         embed.add_field(name = "🔤 !guess [WORD]", value = "Make a guess in your active game. (Example: `!guess APPLE`)", inline = False)
-        embed.add_field(name = "🤫 !hint", value = "Reveals BEST possible options to guide you in Wordle", inline = False)
         embed.add_field(name = "📈 !stats", value = "View your win/loss record", inline = False)
         embed.add_field(name = "❌ !surrender", value = "Surrender and view the correct word immediately", inline = False)
         embed.add_field(name = "🌪️ !scramble/!unscramble", value = "Bot shuffles a word and YOU have to unscramble the word", inline = False)
