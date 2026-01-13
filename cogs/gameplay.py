@@ -160,8 +160,8 @@ class Gameplay(commands.Cog):
             view = HintView(self, ctx)           # Create the view for the user to see the hint button per guess
             await ctx.send(f"{final_message}\n\n**{remaining}** {word} remaining.", view=view)
 
-    # HINT COMMAND
-    @commands.command()
+    # HINT COMMAND (No longer a command but uses logic for hint button per guess)
+    # @commands.command()
     async def hint(self, ctx):
         mention = ctx.author.mention
 
