@@ -16,10 +16,13 @@ intents.message_content = True
 intents.members = True
 bot = commands.Bot(command_prefix='!', intents=intents, help_command=None)
 
+
 @bot.event
 async def on_ready():
     print(f"✅ Logged in as {bot.user.name}")
     print("------")
+    
+    await bot.change_presence(activity=discord.Game(name="Brain Wordle 🧠 | !help"))
     
     # Load the Cogs
     initial_extensions = ['cogs.gameplay', 'cogs.utility']
