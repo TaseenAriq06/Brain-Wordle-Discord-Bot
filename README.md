@@ -38,7 +38,7 @@
 ### This project is currently in **active development**. Here are the planned updates:
 
 * Cloud Deployment: Migrate from local hosting to a 24/7 cloud service (Discloud or Railway).
-* UI Overhaul: enhance the !play interface with Discord Embeds for a cleaner look.
+* UI Overhaul: enhance the !play interface with Discord Embeds for a cleaner look. ✅
 * Stats System: Track user wins, streaks, and average guess counts using a JSON file ✅
 
 ---
