@@ -2,6 +2,22 @@ from discord.ext import commands
 import random
 import storage
 import random
+import discord
+
+class HintView(discord.ui.View):
+    def __init__(self, cog, ctx):
+        super().__init__(timeout=None) # Hint button will never expire until bot restarts
+        self.cog = cog                 # Store the Gameplay cog so we can call the hint command
+        self.ctx = ctx                 # Store the context so we know whos playing
+
+    @discord.ui.button(label="💡 Hint", style=discord.ButtonStyle.blurple)
+    async def hint_button(self, interaction: discord.Interaction, button: discord.ui.Button):
+        if interaction.user.id != self.ctx.author.id: # This verifies if the right person is clicking the hint button
+            await interaction.response.send_message("❌ This isn't your game! Type `!play` to start!", ephemeral=True)
+            return
+        
+        await interaction.response.defer() # Acknowledge the user clicking the button
+        await self.cog.hint(self.ctx)      # Call the existing hint logic from the !hint command
 
 class Gameplay(commands.Cog):
     def __init__(self, bot):
@@ -140,7 +156,9 @@ class Gameplay(commands.Cog):
         else:
             remaining = 6 - attempts_used
             word = "guess" if remaining == 1 else "guesses"
-            await ctx.send(f"{final_message}\n\n**{remaining}** {word} remaining.")
+
+            view = HintView(self, ctx)           # Create the view for the user to see the hint button per guess
+            await ctx.send(f"{final_message}\n\n**{remaining}** {word} remaining.", view=view)
 
     # HINT COMMAND
     @commands.command()
@@ -293,7 +311,6 @@ class Gameplay(commands.Cog):
         
         # Array to hold all invalid letters
         invalid_letters = []
-
         for char in guess.upper():
             # Check if char is wrong AND if we haven't listed it already
             if char not in correct_answer and char not in invalid_letters:
@@ -309,10 +326,11 @@ class Gameplay(commands.Cog):
         if guess in hist:
             await ctx.send(f"{mention},\n ⚠️ You already guessed **{guess}**! Try a different word.")
             return
+        
         hist.append(guess)
 
-        if guess == correct_answer.upper():
-            await ctx.send(f"{mention}, Nice job! The correct answer was **{correct_answer}**\nAttempts Used: {10-attempts_left}")
+        if guess == correct_answer:
+            await ctx.send(f"{mention}, Nice job! The correct answer was **{correct_answer}**")
             del self.scramble_games[ctx.author.id]
         else:
             attempts_left -= 1
