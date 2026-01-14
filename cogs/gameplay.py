@@ -350,17 +350,34 @@ class Gameplay(commands.Cog):
         hist.append(guess)
 
         if guess == correct_answer:
-            await ctx.send(f"{mention}, Nice job! The correct answer was **{correct_answer}**")
+            await ctx.send(f"{mention}, Nice job! The correct answer was **{correct_answer}**\n\n✅ This counted as a **WIN!**")
+            storage.update_stat(ctx.author.id, 'win')
             del self.scramble_games[ctx.author.id]
         else:
             attempts_left -= 1
 
             if attempts_left == 0:
-                await ctx.send(f"{mention},\n💀 **Game Over!** You ran out of attempts.\nThe word was: **{correct_answer}**")
+                await ctx.send(f"{mention},\n💀 **Game Over!** You ran out of attempts.\nThe word was: **{correct_answer}**\n\n❌ This counted as a **LOSS!**")
+                storage.update_stat(ctx.author.id, 'loss')
                 del self.scramble_games[ctx.author.id]
             else:
                 self.scramble_games[ctx.author.id]["attempts"] = attempts_left
-                await ctx.send(f"{mention}\n❌ **Wrong!** Try again. ({attempts_left} attempts left)")
+
+                msg = f"{mention}, ❌ **Wrong!** Try again. ({attempts_left} attempts left)"
+                
+                # When the user makes their first guess, the bot autoamatically provides the first letter as a hint
+                if len(hist) == 1:
+                    first_letter = correct_answer[0]
+                    msg += f"\n💡 **Free Hint:** The word starts with **{first_letter}**"
+                # If the user only has ONE more attempt, bot gives them the last letter 
+                elif attempts_left == 1:
+                    first = correct_answer[0]
+                    last = correct_answer[-1]
+                    # Visualization to show user layout of word
+                    visual_hint = f"`{first} _ _ _ {last}`"
+
+                    msg += f"\n🚨 **LAST CHANCE HINT:** The word ends with **{last}**\n\n{visual_hint}"
+                await ctx.send(msg)
 
 async def setup(bot):
     await bot.add_cog(Gameplay(bot))
