@@ -19,6 +19,15 @@ class HintView(discord.ui.View):
         await interaction.response.defer() # Acknowledge the user clicking the button
         await self.cog.hint(self.ctx)      # Call the existing hint logic from the !hint command
 
+        if self.ctx.author.id in self.cog.active_games:
+            game_data = self.cog.active_games[self.ctx.author.id]
+
+            if game_data["hints_left"] == 0:
+                button.disabled = True  # If you run out of hints you disable the button 
+                button.label = "No Hints Left"
+                button.style = discord.ButtonStyle.red
+                await interaction.message.edit(view=self)
+    
 class Gameplay(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
@@ -47,7 +56,7 @@ class Gameplay(commands.Cog):
     
         # Pick a random word and initialize game state
         secret_word = random.choice(self.word_list)
-        allowed_hints = random.randint(2, 5)
+        allowed_hints = random.randint(2, 3)
         self.active_games[ctx.author.id] = {
             "word" : secret_word,
             "hints_left" : allowed_hints,                        # Stores the number of hints you have
@@ -173,10 +182,7 @@ class Gameplay(commands.Cog):
     
         # Get the current game constraints from memory
         game_data = self.active_games[ctx.author.id]
-
-        if game_data["hints_left"] == 0:
-            await ctx.send(f"{mention}, 🚫 **No hints left!** You used them all.")
-            return
+        
         game_data["hints_left"] -= 1
         remaining = game_data["hints_left"]
 
