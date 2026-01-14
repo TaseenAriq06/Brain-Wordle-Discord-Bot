@@ -4,10 +4,11 @@ import os
 import logging
 from dotenv import load_dotenv
 
+# Load environmental variables from .env file
 load_dotenv()
-token = os.getenv('DISCORD_TOKEN')
+token = os.getenv('DISCORD_TOKEN')  # Access variable using os.getenv
 
-# Setup Logging
+# Setup Logging to save system alerts
 handler = logging.FileHandler(filename='discord.log', encoding='utf-8', mode='w')
 
 # Setup Bot

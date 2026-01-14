@@ -102,7 +102,7 @@ class Gameplay(commands.Cog):
             letter = user_guess[i]
             if letter == target_word[i]:
                 result[i] = "🟩 "
-                target_counts[letter] -= 1
+                target_counts[letter] -= 1 # Minus the frequency counter of the letter in the secret word when 1 letter is green
 
                 known_greens[i] = letter
                 if letter in known_yellows:
@@ -254,20 +254,25 @@ class Gameplay(commands.Cog):
     async def surrender(self, ctx):
         mention = ctx.author.mention
 
-        if ctx.author.id not in self.active_games: # Check if the user is actually playing
-            await ctx.send(f"{mention},\n**❌ You aren't playing right now! Type `!play` to start.**")
-            return
-
-        # Retrieve the secret word so you can show the user
-        game_data = self.active_games[ctx.author.id]
-        target_word = game_data["word"]
-
-        # This counts as a loss for giving up
-        storage.update_stat(ctx.author.id, 'loss')
-
-        # End the game
-        await ctx.send(f"{mention}\n 🏳️ **You surrendered.**\nThe secret word was: ||**{target_word}**||\n\n📉 This has been recorded as a **loss**.")
-        del self.active_games[ctx.author.id]
+        # Check if they are playing Wordle
+        if ctx.author.id in self.active_games:
+            game_data = self.active_games[ctx.author.id]
+            target_word = game_data["word"]
+            storage.update_stat(ctx.author.id, 'loss')
+            await ctx.send(f"{mention}\n 🏳️ **You surrendered.**\nThe secret word was: ||**{target_word}**||\n\n📉 This has been recorded as a **loss**.")
+            del self.active_games[ctx.author.id]
+            pass 
+        # Check if they are playing Scramble
+        elif ctx.author.id in self.scramble_games:
+            game_data = self.scramble_games[ctx.author.id]
+            target_word = game_data["word"]
+            storage.update_stat(ctx.author.id, 'loss')
+            await ctx.send(f"{mention}\n 🏳️ **You surrendered.**\nThe scrambled word was: ||**{target_word}**||\n\n📉 This has been recorded as a **loss**.")
+            del self.scramble_games[ctx.author.id]
+            pass
+        # If they are in neither games, give the error
+        else:
+            await ctx.send(f"{mention}, ❌ You aren't playing anything!")
 
     def __init__(self, bot):
             self.bot = bot
