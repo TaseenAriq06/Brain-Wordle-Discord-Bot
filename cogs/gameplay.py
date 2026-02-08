@@ -87,7 +87,7 @@ class Gameplay(commands.Cog):
             "is_daily": True
         }
         today_str = datetime.date.today().strftime('%B %d')
-        await ctx.send(f"{mention}, 📅 **Started Daily Wordle ({today_str})**\nType `!guess [WORD]` to play!\n💡 **Hints allowed: ** {allowed_hints}\n*(Warning: This is the real answer. Don't spoil it for others!)*")
+        await ctx.send(f"{mention}, 📅 **Started Daily Wordle ({today_str})**\nType `!guess [WORD]` to play!\n💡 **Hints allowed: ** {allowed_hints}\n*(Warning: This is the real answer. Don't spoil it for others! Don't use `!nyt` to cheat either 😉)*")
 
     # PLAY command
     @commands.command()
