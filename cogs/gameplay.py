@@ -68,6 +68,7 @@ class Gameplay(commands.Cog):
         except:
             return None
     
+    # WORDLE command
     @commands.command()
     async def wordle(self, ctx):
         mention = ctx.author.mention
