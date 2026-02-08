@@ -231,8 +231,8 @@ class Gameplay(commands.Cog):
                     f"{final_message}\n\n"
                     f"🎉 **YOU WON!**\n"
                     f"The word was: ||**{target_word}**||\n"
-                    f"🤔 **Attempts:** {attempts_used}\n"
-                    f"✅ This counted as a **WIN!**"
+                    f"🤔 **Attempts:** {attempts_used}\n\n"
+                    f"✅ This counted as a **WIN!** in `!stats`\n"
                 )
             await ctx.send(win_msg)
             del self.active_games[ctx.author.id] # Clear game from memory
@@ -242,7 +242,7 @@ class Gameplay(commands.Cog):
                 loss_msg = f"{final_message}\n\n🥀 **Daily Wordle Failed.** The word was ||**{target_word}**||. Try again tomorrow."
             else:
                 storage.update_stat(ctx.author.id, 'loss')
-                loss_msg = f"{final_message}\n\n💀 **GAME OVER!** You ran out of guesses.\nThe word was: ||**{target_word}**||\n ❌ This counted as a loss."
+                loss_msg = f"{final_message}\n\n💀 **GAME OVER!** You ran out of guesses.\nThe word was: ||**{target_word}**||\n\n❌ This counted as a **LOSS** in `!stats`."
             
             await ctx.send(loss_msg)
             del self.active_games[ctx.author.id] # Clear game from memory
