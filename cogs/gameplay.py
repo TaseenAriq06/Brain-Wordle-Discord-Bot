@@ -17,12 +17,20 @@ class HintView(discord.ui.View):
             await interaction.response.send_message("❌ This isn't your game! Type `!play` to start!", ephemeral=True)
             return
         
+        if self.ctx.author.id in self.cog.active_games:
+            game_data = self.cog.active_games[self.ctx.author.id]
+            if game_data["hints_left"] <= 0:
+                button.disabled = True
+                button.label = "No Hints Left"
+                button.style = discord.ButtonStyle.red
+                await interaction.message.edit(view=self)
+                return
+
         await interaction.response.defer() # Acknowledge the user clicking the button
         await self.cog.hint(self.ctx)      # Call the existing hint logic from the !hint command
 
         if self.ctx.author.id in self.cog.active_games:
             game_data = self.cog.active_games[self.ctx.author.id]
-
             if game_data["hints_left"] == 0:
                 button.disabled = True  # If you run out of hints you disable the button 
                 button.label = "No Hints Left"
@@ -105,6 +113,7 @@ class Gameplay(commands.Cog):
             "word" : secret_word,
             "hints_left" : allowed_hints,                         # Stores the number of hints you have
             "history": [],                                        # Stores past guesses in visual rows
+            "clean_history": [],                                  # This will be used to censor WORDLE answer display
             "greens": ["_", "_", "_", "_", "_"],                  # Tracks known correct positions
             "yellows": set(),                                     # Tracks known valid letters (use hashset to prevent dupes)
             "grays": set(),                                       # Tracks bad letters which are gray
@@ -221,7 +230,8 @@ class Gameplay(commands.Cog):
                     f"{final_message}\n\n"
                     f"🎉 **YOU WON!**\n"
                     f"The word was: ||**{target_word}**||\n"
-                    f"🤔 **Attempts:** {attempts_used}"
+                    f"🤔 **Attempts:** {attempts_used}\n"
+                    f"✅ This counted as a **WIN!**"
                 )
             await ctx.send(win_msg)
             del self.active_games[ctx.author.id] # Clear game from memory
@@ -231,7 +241,7 @@ class Gameplay(commands.Cog):
                 loss_msg = f"{final_message}\n\n🥀 **Daily Failed.** The word was ||**{target_word}**||. Try again tomorrow."
             else:
                 storage.update_stat(ctx.author.id, 'loss')
-                loss_msg = f"{final_message}\n\n💀 **GAME OVER!** You ran out of guesses.\nThe word was: ||**{target_word}**||"
+                loss_msg = f"{final_message}\n\n💀 **GAME OVER!** You ran out of guesses.\nThe word was: ||**{target_word}**||\n ❌ This counted as a loss."
             
             await ctx.send(loss_msg)
             del self.active_games[ctx.author.id] # Clear game from memory
@@ -254,6 +264,10 @@ class Gameplay(commands.Cog):
     
         # Get the current game constraints from memory
         game_data = self.active_games[ctx.author.id]
+
+        if game_data["hints_left"] <= 0:
+            await ctx.send(f"{mention}, ❌ You have no hints left!")
+            return
         
         game_data["hints_left"] -= 1
         remaining = game_data["hints_left"]
