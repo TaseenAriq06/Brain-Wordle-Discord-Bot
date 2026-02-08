@@ -77,12 +77,14 @@ class Gameplay(commands.Cog):
         allowed_hints = random.randint(2, 3)
         self.active_games[ctx.author.id] = {
             "word" : secret_word,
-            "hints_left" : allowed_hints,                        # Stores the number of hints you have
-            "history": [],                                       # Stores past guesses in visual rows
-            "greens": ["_", "_", "_", "_", "_"],                 # Tracks known correct positions
-            "yellows": set(),                                    # Tracks known valid letters (use hashset to prevent dupes)
-            "grays": set(),                                      # Tracks bad letters which are gray
-            "bad_positions": [set(), set(), set(), set(), set()] # List of 5 sets to hold specific index values for each letter
+            "hints_left" : allowed_hints,                         # Stores the number of hints you have
+            "history": [],                                        # Stores past guesses in visual rows
+            "clean_history": [],                                  # This will be used to censor WORDLE answer display
+            "greens": ["_", "_", "_", "_", "_"],                  # Tracks known correct positions
+            "yellows": set(),                                     # Tracks known valid letters (use hashset to prevent dupes)
+            "grays": set(),                                       # Tracks bad letters which are gray
+            "bad_positions": [set(), set(), set(), set(), set()], # List of 5 sets to hold specific index values for each letter
+            "is_daily": True
         }
         today_str = datetime.date.today().strftime('%B %d')
         await ctx.send(f"{mention}, 📅 **Started Daily Wordle ({today_str})**\nType `!guess [WORD]` to play!\n💡 **Hints allowed: ** {allowed_hints}\n*(Warning: This is the real answer. Don't spoil it for others!)*")
@@ -101,12 +103,13 @@ class Gameplay(commands.Cog):
         allowed_hints = random.randint(2, 3)
         self.active_games[ctx.author.id] = {
             "word" : secret_word,
-            "hints_left" : allowed_hints,                        # Stores the number of hints you have
-            "history": [],                                       # Stores past guesses in visual rows
-            "greens": ["_", "_", "_", "_", "_"],                 # Tracks known correct positions
-            "yellows": set(),                                    # Tracks known valid letters (use hashset to prevent dupes)
-            "grays": set(),                                      # Tracks bad letters which are gray
-            "bad_positions": [set(), set(), set(), set(), set()] # List of 5 sets to hold specific index values for each letter
+            "hints_left" : allowed_hints,                         # Stores the number of hints you have
+            "history": [],                                        # Stores past guesses in visual rows
+            "greens": ["_", "_", "_", "_", "_"],                  # Tracks known correct positions
+            "yellows": set(),                                     # Tracks known valid letters (use hashset to prevent dupes)
+            "grays": set(),                                       # Tracks bad letters which are gray
+            "bad_positions": [set(), set(), set(), set(), set()], # List of 5 sets to hold specific index values for each letter
+            "is_daily": False                                     # Used to mark as a daily game
         }
         await ctx.send(f"{mention}, 🎮 **New Game Started!**\nI've picked a secret 5-letter word.\nType `!guess WORD` to play!\n💡 **Hints allowed: ** {allowed_hints}")
 
@@ -122,8 +125,10 @@ class Gameplay(commands.Cog):
         game_data = self.active_games[ctx.author.id]
         target_word = game_data["word"]
         history = game_data["history"]
+        clean_history = game_data["clean_history"]
         known_greens = game_data["greens"]
         known_yellows = game_data["yellows"]
+        is_daily = game_data.get("is_daily", False)
 
         user_guess = user_guess.upper()
 
@@ -174,12 +179,16 @@ class Gameplay(commands.Cog):
                 if letter not in known_greens:
                     known_yellows.add(letter)
                 game_data["bad_positions"][i].add(letter)
-
         # If there is no counts left, letters stay gray
+
         # Build the final row string
         row_emojis = "".join(result)
         full_row = f"{row_emojis} (`{user_guess}`)"
         history.append(full_row)
+        
+        # This will censor the guesses if you win the Wordle
+        clean_row = f"{row_emojis} `(#####)`"
+        clean_history.append(clean_row)
 
         # Prepare status header (shows which letter user has found so far)
         green_display = " ".join(known_greens)
@@ -197,15 +206,36 @@ class Gameplay(commands.Cog):
                 game_data["grays"].add(letter)
     
         if user_guess == target_word:
-            storage.update_stat(ctx.author.id, 'win') # update the win count by 1
-
-            await ctx.send(f"{final_message}\n\n🎉 **YOU WON!** The word was **{target_word}.\n🤔 Attempts:** {attempts_used}")
+            if is_daily:
+                clean_board = "\n".join(clean_history)
+                win_msg = (
+                    f"{clean_board}\n\n"
+                    f"🌟 **DAILY CHALLENGE COMPLETE!** 🌟\n"
+                    f"The word was: ||**{target_word}**||\n"
+                    f"🧠 **Attempts:** {attempts_used}\n\n"
+                    f"*Everything hidden for privacy and respect of other players. No STAT update*"
+                )
+            else:
+                storage.update_stat(ctx.author.id, 'win')
+                win_msg = (
+                    f"{final_message}\n\n"
+                    f"🎉 **YOU WON!**\n"
+                    f"The word was: ||**{target_word}**||\n"
+                    f"🤔 **Attempts:** {attempts_used}"
+                )
+            await ctx.send(win_msg)
             del self.active_games[ctx.author.id] # Clear game from memory
+
         elif attempts_used >= 6:
-            storage.update_stat(ctx.author.id, 'loss') # update the loss count by 1
-
-            await ctx.send(f"{final_message}\n\n💀 **GAME OVER!** You ran out of guesses.\nThe word was: ||**{target_word}**||")
+            if is_daily:
+                loss_msg = f"{final_message}\n\n🥀 **Daily Failed.** The word was ||**{target_word}**||. Try again tomorrow."
+            else:
+                storage.update_stat(ctx.author.id, 'loss')
+                loss_msg = f"{final_message}\n\n💀 **GAME OVER!** You ran out of guesses.\nThe word was: ||**{target_word}**||"
+            
+            await ctx.send(loss_msg)
             del self.active_games[ctx.author.id] # Clear game from memory
+
         else:
             remaining = 6 - attempts_used
             word = "guess" if remaining == 1 else "guesses"
@@ -307,6 +337,11 @@ class Gameplay(commands.Cog):
             game_data = self.active_games[ctx.author.id]
             target_word = game_data["word"]
             storage.update_stat(ctx.author.id, 'loss')
+            is_daily = game_data.get("is_daily", False)
+
+            if not is_daily:
+                storage.update_stat(ctx.author.id, 'loss')
+
             await ctx.send(f"{mention}\n 🏳️ **You surrendered.**\nThe secret word was: ||**{target_word}**||\n\n📉 This has been recorded as a **loss**.")
             del self.active_games[ctx.author.id]
             pass 
