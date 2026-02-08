@@ -1,8 +1,9 @@
 from discord.ext import commands
 import random
 import storage
-import random
 import discord
+import requests
+import datetime
 
 class HintView(discord.ui.View):
     def __init__(self, cog, ctx):
@@ -44,6 +45,47 @@ class Gameplay(commands.Cog):
         except:
             print("❌ Error: words.txt not found!")
             self.word_list = ["ERROR"]
+        
+    def get_nyt_word(self):
+        try:
+            date_string = datetime.date.today().strftime("%Y-%m-%d")
+            url = f"https://www.nytimes.com/svc/wordle/v2/{date_string}.json"
+            headers = {'User-Agent': 'Mozilla/5.0'}
+
+            response = requests.get(url, headers=headers)
+            if response.status_code == 200:
+                data = response.json()
+                return data['solution'].upper()
+            return None
+        except:
+            return None
+    
+    @commands.command()
+    async def wordle(self, ctx):
+        mention = ctx.author.mention
+
+        if ctx.author.id in self.active_games:
+            await ctx.send(f"{mention},\n❌ **You already have a game running! Finish it or just keep guessing.**")
+            return
+        
+        secret_word = self.get_nyt_word()
+
+        if not secret_word:
+            await ctx.send(f"{mention},\n❌ Error: Couldn't fetch NYT word. Starting a random game instead.")
+            secret_word = random.choice(self.word_list)
+
+        allowed_hints = random.randint(2, 3)
+        self.active_games[ctx.author.id] = {
+            "word" : secret_word,
+            "hints_left" : allowed_hints,                        # Stores the number of hints you have
+            "history": [],                                       # Stores past guesses in visual rows
+            "greens": ["_", "_", "_", "_", "_"],                 # Tracks known correct positions
+            "yellows": set(),                                    # Tracks known valid letters (use hashset to prevent dupes)
+            "grays": set(),                                      # Tracks bad letters which are gray
+            "bad_positions": [set(), set(), set(), set(), set()] # List of 5 sets to hold specific index values for each letter
+        }
+        today_str = datetime.date.today().strftime('%B %d')
+        await ctx.send(f"{mention}, 📅 **Started Daily Wordle ({today_str})**\nType `!guess [WORD]` to play!\n💡 **Hints allowed: ** {allowed_hints}\n*(Warning: This is the real answer. Don't spoil it for others!)*")
 
     # PLAY command
     @commands.command()
@@ -88,7 +130,7 @@ class Gameplay(commands.Cog):
         if len(user_guess) != 5:
             await ctx.send(f"{mention}, ⚠️ Guess must be exactly 5 letters!")
             return
-        if user_guess not in self.word_list:
+        if user_guess not in self.word_list and user_guess != target_word:
             await ctx.send(f"{mention},\n❌ **{user_guess}** is not a valid word in my dictionary!")
             return
     
