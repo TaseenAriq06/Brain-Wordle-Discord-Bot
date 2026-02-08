@@ -27,6 +27,7 @@
 | :--- | :--- | :--- |
 | **!help** | `!help` | Displays a custom embed listing all available commands. |
 | **!nyt** | `!nyt` | Connects to the NYT API to retrieve the *official* Wordle answer for the current date (hidden behind a spoiler tag). |
+| **!wordle** | `!wordle` | Allows you to play the official Wordle with hints included! Censorship included. |
 | **!play** | `!play` | Starts a new, private Wordle game session for the user. |
 | **!guess** | `!guess [word]` | Submits a 5-letter word attempt. Returns the board with emojis indicating letter accuracy (🟩 Green, 🟨 Yellow, ⬜ Gray). |
 | **!stats** | `!stats` | Displays your personal win/loss record, win percentage, and streak history. |
