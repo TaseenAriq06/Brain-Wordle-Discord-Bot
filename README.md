@@ -20,7 +20,7 @@
   <img src="https://github.com/TaseenAriq06/Brain-Wordle-Discord-Bot/blob/f4f2175546776c768702637a862df1a0d4d8fce2/assets/stats.webp" width="400" height="500" />
   <img src="https://github.com/TaseenAriq06/Brain-Wordle-Discord-Bot/blob/21f11bdab8f82e55018f40addba84ca2df05e033/assets/hint.webp" width="370" height="600" />
   <img src="https://github.com/TaseenAriq06/Brain-Wordle-Discord-Bot/blob/0896cbc6d3a150bc359a6e0dd35dc06c95e3f6a6/assets/scramble.webp" width="370" height="600" />
-  <img src="https://github.com/TaseenAriq06/Brain-Wordle-Discord-Bot/blob/6e45a65d81e689e0d6799b93f572fc635cc871d5/assets/wordle.webp" width="370" height="600" />
+  <img src="https://github.com/TaseenAriq06/Brain-Wordle-Discord-Bot/blob/6e45a65d81e689e0d6799b93f572fc635cc871d5/assets/wordle.webp" width="370" height="900" />
 
   
 ### 🛠️ Utilities
