@@ -238,7 +238,7 @@ class Gameplay(commands.Cog):
 
         elif attempts_used >= 6:
             if is_daily:
-                loss_msg = f"{final_message}\n\n🥀 **Daily Failed.** The word was ||**{target_word}**||. Try again tomorrow."
+                loss_msg = f"{final_message}\n\n🥀 **Daily Wordle Failed.** The word was ||**{target_word}**||. Try again tomorrow."
             else:
                 storage.update_stat(ctx.author.id, 'loss')
                 loss_msg = f"{final_message}\n\n💀 **GAME OVER!** You ran out of guesses.\nThe word was: ||**{target_word}**||\n ❌ This counted as a loss."
