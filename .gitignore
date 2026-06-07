@@ -1,13 +1,13 @@
-# Security (NEVER upload these)
+
 .env
 discloud.config
 token.txt
 
-# Python cache (Junk files)
+
 __pycache__/
 *.py[cod]
 stats.json
 
-# Logs
+
 *.log
 discord.log
